@@ -12,9 +12,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { catchError, firstValueFrom } from 'rxjs';
+import { catchError } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -24,10 +26,13 @@ export class ProductsController {
 
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
-    return this.productsClient.send(
-      { cmd: 'find_all_products' },
-      { ...paginationDto },
-    );
+    return this.productsClient
+      .send({ cmd: 'find_all_products' }, { ...paginationDto })
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(err);
+        }),
+      );
   }
 
   @Get(':id')
@@ -49,18 +54,34 @@ export class ProductsController {
 
   @Post()
   @HttpCode(201)
-  create(@Body() data: any) {
-    return data;
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productsClient
+      .send({ cmd: 'create_product' }, { ...createProductDto })
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(err);
+        }),
+      );
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() data: any) {
-    return `update ${id} + ${data}`;
+  update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
+    return this.productsClient
+      .send({ cmd: 'update_product' }, { id, ...updateProductDto })
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(err);
+        }),
+      );
   }
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: number) {
-    return 'deleted ' + id;
+  delete(@Param('id') id: number): void {
+    this.productsClient.send({ cmd: 'remove_product' }, { id }).pipe(
+      catchError((err) => {
+        throw new RpcException(err);
+      }),
+    );
   }
 }
