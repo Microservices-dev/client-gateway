@@ -17,7 +17,7 @@ export class CreateOrderDto {
   totalItems: number;
 
   @IsEnum(OrderStatus, {
-    message: `Status must be one of these: ${OrderStatus.PENDING}, ${OrderStatus.COMPLETED}, ${OrderStatus.DELIVERED}, ${OrderStatus.CANCELLED}`,
+    message: `Status must be one of these: ${OrderStatus.PENDING}, ${OrderStatus.CONFIRMED}, ${OrderStatus.DELIVERED}, ${OrderStatus.CANCELLED}`,
   })
   @IsOptional()
   status: OrderStatus = OrderStatus.PENDING;

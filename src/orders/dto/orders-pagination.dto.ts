@@ -5,7 +5,7 @@ import { OrderStatus } from '../enum/order.enum';
 export class OrderPaginationDto extends PaginationDto {
   @IsOptional()
   @IsEnum(OrderStatus, {
-    message: `status must be a valid enum value ${OrderStatus.PENDING}, ${OrderStatus.COMPLETED}, ${OrderStatus.DELIVERED}, ${OrderStatus.CANCELLED}`,
+    message: `status must be a valid enum value ${OrderStatus.PENDING}, ${OrderStatus.CONFIRMED}, ${OrderStatus.DELIVERED}, ${OrderStatus.CANCELLED}`,
   })
   status?: OrderStatus;
 }
